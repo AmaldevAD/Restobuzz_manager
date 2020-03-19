@@ -19,14 +19,14 @@ class Food {
   }
 
   setAvailable() {
-    return { "available": true, "limited": false};
+    return { "available": true, "limited": false,"price":price};
   }
 
   notAvailable() {
-    return { "available": false, "limited": false};
+    return { "available": false, "limited": false,"price":price};
   }
 
   setLimited() {
-    return { "available": false, "limited": true};
+    return { "available": false, "limited": true,"price":price};
   }
 }

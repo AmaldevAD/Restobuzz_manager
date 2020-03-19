@@ -5,14 +5,10 @@ import 'package:restobudzz/models/food.dart';
 import 'dart:async';
 import 'dart:convert';
 
-
-
- final FirebaseApp app= FirebaseApp(
-   name: "[DEFAULT]",
+final FirebaseApp app = FirebaseApp(
+  name: "[DEFAULT]",
 );
-FirebaseDatabase db=FirebaseDatabase.instance;
-
-
+FirebaseDatabase db = FirebaseDatabase.instance;
 
 DatabaseReference itemRef;
 
@@ -26,7 +22,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<Food> _food = List();
 
- 
   Query _foodQuerry;
   String hotelId = "hotelid";
   StreamSubscription<Event> _onFoodAddedSubscription;
@@ -40,17 +35,15 @@ class _HomeState extends State<Home> {
   }
 
   initFood() async {
-      final FirebaseDatabase _database = FirebaseDatabase(app:app);
+    final FirebaseDatabase _database = FirebaseDatabase(app: app);
     _foodQuerry = await _database
         .reference()
         .child('$hotelId')
         .child("food")
         .once()
         .then((DataSnapshot snapshot) {
-
-
       print(snapshot.value);
-     // Map<dynamic, dynamic> map = snapshot.value;
+      // Map<dynamic, dynamic> map = snapshot.value;
 
       // snapshot.value.forEach((childSnapshot) {
       //   //var childKey = childSnapshot.key;
@@ -62,7 +55,7 @@ class _HomeState extends State<Home> {
       // for(int i=0;i<snapshot.value.length;i++){
       //   _food.add(Food.fromSnapshot(snapshot.value["maggi"]));
       // }
-      
+
       //print(_food[0].available);
       // print(snapshot.value);
       // _food.add(Food.fromSnapshot(map[0]));
@@ -72,15 +65,11 @@ class _HomeState extends State<Home> {
 
     //print(_food[0].available);
 
-    itemRef=_database.reference().child('$hotelId').child("food");
+    itemRef = _database.reference().child('$hotelId').child("food");
     itemRef.onChildChanged.listen(onEntryChanged);
     itemRef.onChildAdded.listen(onEntryAdded);
     itemRef.onChildRemoved.listen(onEntrydeleted);
   }
-
-
-
-
 
   @override
   void dispose() {
@@ -96,7 +85,7 @@ class _HomeState extends State<Home> {
     });
 
     setState(() {
-     // _food[_food.indexOf(oldEntry)] = Food.fromSnapshot(event.snapshot);
+      // _food[_food.indexOf(oldEntry)] = Food.fromSnapshot(event.snapshot);
       _food.removeAt(_food.indexOf(oldEntry));
     });
   }
@@ -119,41 +108,554 @@ class _HomeState extends State<Home> {
     });
   }
 
-
-  inputItem() async{
-    Food f= Food(price: 25);
-    db.reference().child("$hotelId").child("food").child("manga").set(f.toJson());
+  inputItem() async {
+    Food f = Food(price: 25);
+    db
+        .reference()
+        .child("$hotelId")
+        .child("food")
+        .child("manga")
+        .set(f.toJson());
   }
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         title: Text("Home"),
       ),
-      body: Column(
-        children: <Widget>[
+      body: SingleChildScrollView(
+        child: Column(
+          //crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            //limited items list
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: limitedItems(width),
+              ),
+            ),
 
-          Column(
-            
-          ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: availableItems(width),
+              ),
+            ),
 
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: overItems(width),
+              ),
+            ),
 
-
-          Container(
-            height: 300,
-            child: ListView.builder(
-                itemCount: _food.length,
-                itemBuilder: (context, int i) {
-                  return Text("${_food[i].food}");
-                }),
-          ),
-
-          IconButton(icon: Icon(Icons.add), onPressed: (){
-            inputItem();
-          })
-        ],
+            IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  inputItem();
+                })
+          ],
+        ),
       ),
     );
+  }
+
+  //limited List
+  limitedItems(width) {
+    List<Widget> limited = [];
+
+    for (int i = 0; i < _food.length; i++) {
+      if (_food[i].limited == true) {
+        setState(() {
+          limited.add(
+            Container(
+              //padding: EdgeInsets.all(10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text("${_food[i].food}"),
+
+                  //options
+                  Container(
+                    width: width / 3.4,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        //availability
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          //crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text(
+                              "available",
+                              style: TextStyle(
+                                  fontSize: width / 45, color: Colors.green),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 2, color: Colors.green),
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: InkWell(
+                                onTap: () {
+                                  Food f = Food(price: _food[i].price);
+                                  db
+                                      .reference()
+                                      .child("$hotelId")
+                                      .child("food")
+                                      .child("${_food[i].food}")
+                                      .set(f.setAvailable());
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    // color: Colors.grey,
+                                  ),
+                                  margin: EdgeInsets.all(5),
+                                  width: 10,
+                                  height: 10,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // limited
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "limited",
+                              style: TextStyle(
+                                  fontSize: width / 45,
+                                  color: Colors.yellow[900]),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 2, color: Colors.yellow[800]),
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.yellow[800],
+                                ),
+                                margin: EdgeInsets.all(5),
+                                width: 10,
+                                height: 10,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // over
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "over",
+                              style: TextStyle(
+                                  fontSize: width / 45, color: Colors.red),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 2, color: Colors.red),
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: InkWell(
+                                onTap: (){
+                                  Food f=Food(price: _food[i].price);
+                                  db
+                                      .reference()
+                                      .child("$hotelId")
+                                      .child("food")
+                                      .child("${_food[i].food}")
+                                      .set(f.notAvailable());
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    // color: Colors.grey,
+                                  ),
+                                  margin: EdgeInsets.all(5),
+                                  width: 10,
+                                  height: 10,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+
+        limited.add(Divider());
+      }
+    }
+    if (limited.length > 0) {
+      limited.insert(
+          0,
+          Container(
+            margin: const EdgeInsets.only(top: 10),
+            child: Text(
+              "Limited :",
+              style: TextStyle(
+                  fontSize: width / 13,
+                  color: Colors.grey[700],
+                  fontWeight: FontWeight.w600),
+            ),
+          ));
+
+      limited.insert(1, Divider());
+    }
+    return limited;
+  }
+
+  //available
+  //available List
+  availableItems(width) {
+    List<Widget> available = [];
+    available.clear();
+    for (int i = 0; i < _food.length; i++) {
+      if (_food[i].available == true) {
+        setState(() {
+          available.add(
+            Container(
+              //padding: EdgeInsets.all(10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text("${_food[i].food}"),
+
+                  //options
+                  Container(
+                    width: width / 3.4,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        //availability
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          //crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text(
+                              "available",
+                              style: TextStyle(
+                                  fontSize: width / 45, color: Colors.green),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 2, color: Colors.green),
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: InkWell(
+                                onTap: () {
+                                  Food f = Food(price: _food[i].price);
+                                  db
+                                      .reference()
+                                      .child("$hotelId")
+                                      .child("food")
+                                      .child("${_food[i].food}")
+                                      .set(f.setAvailable());
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                     color: Colors.green,
+                                  ),
+                                  margin: EdgeInsets.all(5),
+                                  width: 10,
+                                  height: 10,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // limited
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "limited",
+                              style: TextStyle(
+                                  fontSize: width / 45,
+                                  color: Colors.yellow[900]),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 2, color: Colors.yellow[800]),
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: InkWell(
+                                onTap: () {
+                                  Food f = Food(price: _food[i].price);
+                                  db
+                                      .reference()
+                                      .child("$hotelId")
+                                      .child("food")
+                                      .child("${_food[i].food}")
+                                      .set(f.setLimited());
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                   // color: Colors.yellow[800],
+                                  ),
+                                  margin: EdgeInsets.all(5),
+                                  width: 10,
+                                  height: 10,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // over
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "over",
+                              style: TextStyle(
+                                  fontSize: width / 45, color: Colors.red),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 2, color: Colors.red),
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: InkWell(
+                                onTap: (){
+                                  Food f=Food(price: _food[i].price);
+                                  db
+                                      .reference()
+                                      .child("$hotelId")
+                                      .child("food")
+                                      .child("${_food[i].food}")
+                                      .set(f.notAvailable());
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    // color: Colors.grey,
+                                  ),
+                                  margin: EdgeInsets.all(5),
+                                  width: 10,
+                                  height: 10,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+
+        available.add(Divider());
+      }
+    }
+    if (available.length > 0) {
+      available.insert(
+          0,
+          Container(
+            margin: const EdgeInsets.only(top: 10),
+            child: Text(
+              "Available:",
+              style: TextStyle(
+                  fontSize: width / 13,
+                  color: Colors.grey[700],
+                  fontWeight: FontWeight.w600),
+            ),
+          ));
+
+      available.insert(1, Divider());
+    }
+    return available;
+  }
+
+  //
+
+  //available
+  //Over List
+  overItems(width) {
+    List<Widget> over = [];
+    over.clear();
+    for (int i = 0; i < _food.length; i++) {
+      if (_food[i].available == false&&_food[i].limited==false) {
+        setState(() {
+          over.add(
+            Container(
+              //padding: EdgeInsets.all(10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text("${_food[i].food}"),
+
+                  //options
+                  Container(
+                    width: width / 3.4,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        //availability
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          //crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text(
+                              "available",
+                              style: TextStyle(
+                                  fontSize: width / 45, color: Colors.green),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 2, color: Colors.green),
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: InkWell(
+                                onTap: () {
+                                  Food f = Food(price: _food[i].price);
+                                  db
+                                      .reference()
+                                      .child("$hotelId")
+                                      .child("food")
+                                      .child("${_food[i].food}")
+                                      .set(f.setAvailable());
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                   //  color: Colors.green,
+                                  ),
+                                  margin: EdgeInsets.all(5),
+                                  width: 10,
+                                  height: 10,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // limited
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "limited",
+                              style: TextStyle(
+                                  fontSize: width / 45,
+                                  color: Colors.yellow[900]),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 2, color: Colors.yellow[800]),
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: InkWell(
+                                onTap: () {
+                                  Food f = Food(price: _food[i].price);
+                                  db
+                                      .reference()
+                                      .child("$hotelId")
+                                      .child("food")
+                                      .child("${_food[i].food}")
+                                      .set(f.setLimited());
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                   // color: Colors.yellow[800],
+                                  ),
+                                  margin: EdgeInsets.all(5),
+                                  width: 10,
+                                  height: 10,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // over
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "over",
+                              style: TextStyle(
+                                  fontSize: width / 45, color: Colors.red),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 2, color: Colors.red),
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: InkWell(
+                                onTap: (){
+                                  Food f=Food(price: _food[i].price);
+                                  db
+                                      .reference()
+                                      .child("$hotelId")
+                                      .child("food")
+                                      .child("${_food[i].food}")
+                                      .set(f.notAvailable());
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                     color: Colors.red,
+                                  ),
+                                  margin: EdgeInsets.all(5),
+                                  width: 10,
+                                  height: 10,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+
+        over.add(Divider());
+      }
+    }
+    if (over.length > 0) {
+      over.insert(
+          0,
+          Container(
+            margin: const EdgeInsets.only(top: 10),
+            child: Text(
+              "Out of Stock:",
+              style: TextStyle(
+                  fontSize: width / 13,
+                  color: Colors.grey[700],
+                  fontWeight: FontWeight.w600),
+            ),
+          ));
+
+      over.insert(1, Divider());
+    }
+    return over;
   }
 }
