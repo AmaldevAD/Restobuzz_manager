@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "321907929041",
+    "firebase_url": "https://restobudzz.firebaseio.com",
+    "project_id": "restobudzz",
+    "storage_bucket": "restobudzz.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:321907929041:android:bd108efaab51c1e18cbaf0",
+        "android_client_info": {
+          "package_name": "com.example.restobudzz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "321907929041-kcdj3g2khl5879odc01jafn6sf0vvq8i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.restobudzz",
+            "certificate_hash": "c4dfe44c142928ce5ee74a85f61f2550d5a28e6a"
+          }
+        },
+        {
+          "client_id": "321907929041-s69btf8b6q8ivnm521la79moei8ha8sr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm3GcSgkYkyHMDC2eHljcX5cDyyKUzA3I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "321907929041-s69btf8b6q8ivnm521la79moei8ha8sr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
