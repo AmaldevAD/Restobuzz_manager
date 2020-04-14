@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:restobudzz/auth/authentication.dart';
 import 'package:restobudzz/screens/home.dart';
+import 'package:restobudzz/screens/profile.dart';
+import 'package:restobudzz/screens/signup.dart';
 
 class Login extends StatefulWidget {
   Login({Key key}) : super(key: key);
@@ -173,7 +175,9 @@ class _LoginState extends State<Login> {
                     EdgeInsets.symmetric(vertical: 20, horizontal: width / 4),
                 child: Center(
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Signup() ));
+                    },
                     child: Container(
                       child: Text(
                         " Signup",

@@ -3,7 +3,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:restobudzz/models/food.dart';
 import 'dart:async';
-import 'dart:convert';
+import 'package:restobudzz/auth/authentication.dart';
+import 'package:restobudzz/screens/login.dart';
 
 final FirebaseApp app = FirebaseApp(
   name: "[DEFAULT]",
@@ -11,6 +12,8 @@ final FirebaseApp app = FirebaseApp(
 FirebaseDatabase db = FirebaseDatabase.instance;
 
 DatabaseReference itemRef;
+Auth _auth;
+String hotelId;
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -23,18 +26,20 @@ class _HomeState extends State<Home> {
   List<Food> _food = List();
 
   Query _foodQuerry;
-  String hotelId = "hotelid";
+
   StreamSubscription<Event> _onFoodAddedSubscription;
   StreamSubscription<Event> _onFoodChangedSubscription;
 
   @override
   void initState() {
     super.initState();
+    _auth = Auth(context: context);
     print(app.name);
     initFood();
   }
 
   initFood() async {
+    hotelId = await _auth.currentUser();
     final FirebaseDatabase _database = FirebaseDatabase(app: app);
     _foodQuerry = await _database
         .reference()
@@ -158,6 +163,18 @@ class _HomeState extends State<Home> {
                 icon: Icon(Icons.add),
                 onPressed: () {
                   inputItem();
+                }),
+            IconButton(
+                icon: Icon(Icons.golf_course),
+                onPressed: () async{
+                 await _auth.signOut();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Login(),
+                    ),
+                    (r) => false,
+                  );
                 })
           ],
         ),
@@ -268,8 +285,8 @@ class _HomeState extends State<Home> {
                                       Border.all(width: 2, color: Colors.red),
                                   borderRadius: BorderRadius.circular(20)),
                               child: InkWell(
-                                onTap: (){
-                                  Food f=Food(price: _food[i].price);
+                                onTap: () {
+                                  Food f = Food(price: _food[i].price);
                                   db
                                       .reference()
                                       .child("$hotelId")
@@ -371,7 +388,7 @@ class _HomeState extends State<Home> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                     color: Colors.green,
+                                    color: Colors.green,
                                   ),
                                   margin: EdgeInsets.all(5),
                                   width: 10,
@@ -410,7 +427,7 @@ class _HomeState extends State<Home> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                   // color: Colors.yellow[800],
+                                    // color: Colors.yellow[800],
                                   ),
                                   margin: EdgeInsets.all(5),
                                   width: 10,
@@ -436,8 +453,8 @@ class _HomeState extends State<Home> {
                                       Border.all(width: 2, color: Colors.red),
                                   borderRadius: BorderRadius.circular(20)),
                               child: InkWell(
-                                onTap: (){
-                                  Food f=Food(price: _food[i].price);
+                                onTap: () {
+                                  Food f = Food(price: _food[i].price);
                                   db
                                       .reference()
                                       .child("$hotelId")
@@ -497,7 +514,7 @@ class _HomeState extends State<Home> {
     List<Widget> over = [];
     over.clear();
     for (int i = 0; i < _food.length; i++) {
-      if (_food[i].available == false&&_food[i].limited==false) {
+      if (_food[i].available == false && _food[i].limited == false) {
         setState(() {
           over.add(
             Container(
@@ -541,7 +558,7 @@ class _HomeState extends State<Home> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                   //  color: Colors.green,
+                                    //  color: Colors.green,
                                   ),
                                   margin: EdgeInsets.all(5),
                                   width: 10,
@@ -580,7 +597,7 @@ class _HomeState extends State<Home> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                   // color: Colors.yellow[800],
+                                    // color: Colors.yellow[800],
                                   ),
                                   margin: EdgeInsets.all(5),
                                   width: 10,
@@ -606,8 +623,8 @@ class _HomeState extends State<Home> {
                                       Border.all(width: 2, color: Colors.red),
                                   borderRadius: BorderRadius.circular(20)),
                               child: InkWell(
-                                onTap: (){
-                                  Food f=Food(price: _food[i].price);
+                                onTap: () {
+                                  Food f = Food(price: _food[i].price);
                                   db
                                       .reference()
                                       .child("$hotelId")
@@ -618,7 +635,7 @@ class _HomeState extends State<Home> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                     color: Colors.red,
+                                    color: Colors.red,
                                   ),
                                   margin: EdgeInsets.all(5),
                                   width: 10,

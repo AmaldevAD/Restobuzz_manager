@@ -7,24 +7,17 @@ import 'package:restobudzz/screens/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-
-
-
-
-
 SharedPreferences _prefs;
 var user;
 
-
-
-  final FirebaseApp app= FirebaseApp(name: "restobudzz",
+final FirebaseApp app = FirebaseApp(
+  name: "restobudzz",
 );
-final FirebaseDatabase dat=FirebaseDatabase(app: app);
-void main() async{
+final FirebaseDatabase dat = FirebaseDatabase(app: app);
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _prefs = await SharedPreferences.getInstance();
-  user=_prefs.getString("user");
+  user = _prefs.getString("user");
   print("user");
   runApp(MyApp());
 }
@@ -39,6 +32,6 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
             primarySwatch: Colors.blue, primaryColor: Colors.blue[900]),
-        home:user==null?Login():Home());
+        home: user == null ? Login() : Home());
   }
 }
