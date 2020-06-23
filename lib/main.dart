@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:restobudzz/screens/home.dart';
+import 'package:restobudzz/screens/homeScreenNavigator.dart';
 import 'package:restobudzz/screens/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,7 +32,9 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-            primarySwatch: Colors.blue, primaryColor: Colors.blue[900]),
-        home: user == null ? Login() : Home());
+            buttonColor: Colors.black,
+            secondaryHeaderColor: Colors.white,
+            focusColor: Colors.black),
+        home: user == null ? Login() : HomeScreenNavigator());
   }
 }

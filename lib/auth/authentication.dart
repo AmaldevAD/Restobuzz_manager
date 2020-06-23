@@ -10,6 +10,7 @@ class Auth {
   Auth({this.context});
   //SignUP
   Future<bool> signUp({@required email, @required password}) async {
+     SharedPreferences _prefs = await SharedPreferences.getInstance();
     try {
       AuthResult result = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
@@ -17,6 +18,7 @@ class Auth {
       assert(user != null);
       assert(await user.getIdToken() != null);
       addDetailsToFirebase();
+      _prefs.setString("user", "${user.uid}");
       return true;
     } catch (e) {
       // handleError(e);

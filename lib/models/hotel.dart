@@ -6,13 +6,14 @@ class Hotel {
   String email;
   bool open;
   String phone;
-  Food food;
+  //Food food;
   String hotelId;
 
-  Hotel({this.name, this.email, this.open, this.phone,this.food, this.hotelId});
+  Hotel({this.name, this.email, this.open, this.phone, this.hotelId});
 
   Hotel.fromSnapshot(DataSnapshot snapshot)
-      : food = snapshot.value["food"],
+      :
+       email = snapshot.value["email"],
         name = snapshot.value["name"],
         open = snapshot.value["open"],
         phone = snapshot.value["phone"],
