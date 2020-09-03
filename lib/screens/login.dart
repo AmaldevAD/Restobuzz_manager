@@ -4,6 +4,7 @@ import 'package:restobudzz/auth/authentication.dart';
 import 'package:restobudzz/screens/home.dart';
 import 'package:restobudzz/screens/homeScreenNavigator.dart';
 import 'package:restobudzz/screens/signup.dart';
+import 'package:restobudzz/screens/userView.dart';
 
 class Login extends StatefulWidget {
   Login({Key key}) : super(key: key);
@@ -34,6 +35,28 @@ class _LoginState extends State<Login> {
         appBar: AppBar(
           backgroundColor: Colors.black,
           title: Text("Login"),
+          actions: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              UserView(),
+                        ),
+                      );
+                    },
+                    child: Text("Customer"),
+                  ),
+                ),
+              ],
+            )
+          ],
         ),
         body: GestureDetector(
           onTap: () {

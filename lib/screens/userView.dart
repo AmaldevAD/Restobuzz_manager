@@ -42,7 +42,7 @@ class _UserViewState extends State<UserView> {
   }
 
    onEntrydeleted(Event event) {
-    print(" hooooooooooooooooooooooooooo");
+
     var oldEntry = _hotel.singleWhere((entry) {
       return entry.hotelId == event.snapshot.key;
     });
@@ -55,7 +55,7 @@ class _UserViewState extends State<UserView> {
   }
 
   onEntryChanged(Event event) {
-    print(" hooooooooooooooooooooooooooo");
+ 
     var oldEntry = _hotel.singleWhere((entry) {
       return entry.hotelId == event.snapshot.key;
     });
@@ -67,7 +67,7 @@ class _UserViewState extends State<UserView> {
   }
 
   onEntryAdded(Event event) {
-    print(" hooooooooooooooooooooooooooo");
+
     print(event.snapshot.key);
     setState(() {
       _hotel.add(Hotel.fromSnapshot(event.snapshot));
